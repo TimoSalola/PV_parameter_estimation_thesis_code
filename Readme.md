@@ -53,4 +53,52 @@ This program was developed and tested using following python and python package 
 * Matplotlib 3.9.0
 * Numpy 1.26.4
 
+# Usage
+In the main_xxx -files comment or uncomment a call to a function as required. For example, a function declared with the
+following line:
+
+> def exhaustive_search_single_day():
+
+can be set to run by adding the line:
+
+> exhaustive_search_single_day()
+
+Into the file which contains the function declaration, in this case in main_angle_estimation.py. Now exhaustive single 
+day angle estimation will run each time when the file main_angle_estimation.py is executed.
+
+The parameters used by functions declared in any of the main_xx.py files can be adjusted by modifying variables within
+these functions. In the following example, the important parameters are defined in the beginning of the function and 
+adjusting parameters such as year_n, first_day, last_day or lattice_point_count will change the behavior of the 
+exhaustive search algorithm. Some functions may also have parameters that are defined in at a later point.
+
+	def exhaustive_search_single_day():
+		#Sample showing how to solve panel angles using exhaustive search #
+	
+		###########################################
+		### Setting parameters and loading data ###
+		###########################################
+		year_n = 2019
+		site = "Kuopio"
+	
+		first_day = 120
+		last_day = 250
+		lattice_point_count = 10000
+
+		# loading system parameters
+		if site == "Helsinki":
+			latitude = config.latitude_helsinki
+			longitude = config.longitude_helsinki
+			known_tilt = config.tilt_helsinki
+			known_azimuth = config.azimuth_helsinki
+			data = solar_power_data_loader2.load_helsinki_csv()
+		elif site == "Kuopio":
+			latitude = config.latitude_kuopio
+			longitude = config.longitude_kuopio
+			known_tilt = config.tilt_kuopio
+			known_azimuth = config.azimuth_kuopio
+			data = solar_power_data_loader2.load_kuopio_csv()
+
+The file config.py contains known parameters of FMI Helsinki and Kuopio installations. They are used by some 
+functions as shown above.
+
 

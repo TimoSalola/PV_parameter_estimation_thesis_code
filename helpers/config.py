@@ -1,13 +1,16 @@
 
 
 timezone = "UTC"
+# albedo is used for ground reflected irradiance calculations
 albedo = 0.151
+# module elevation is used for 2m wind speed to wind speed at module altitude calculation
 module_elevation = 10
 
+# latitude and longitude coordinates of the estimated system. These are used for angle estimation.
 latitude = 60.2044
 longitude = 24.9625
 
-# known location specific params:
+# known parameters of fmi installations
 latitude_helsinki = 60.2044
 longitude_helsinki = 24.9625
 
