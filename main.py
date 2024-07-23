@@ -6,7 +6,102 @@ from helpers import splitters2, config, multiplier_matcher, cloud_free_day_finde
 from estimators import angler
 from pv_model import pvlib_poa
 from estimators import geoguesser_longitude
+from matplotlib.patches import Patch
 
+
+
+def compare_cloudfree_to_cloudy_day():
+    """
+    This plots 2 days from the dataset, a cloudfree day and a hand chosen cloudy day
+    """
+
+    data = solar_power_data_loader2.load_helsinki_csv()
+    year_n = 2019
+
+    data_year = splitters2.split_df_year(data, year_n)
+
+    cloud_free_days = cloud_free_day_finder.find_smooth_days_df(data_year, 150, 250, 0.5)
+
+    cloudy_day_number = 153
+
+    single_cloudy_day = splitters2.split_df_day_range(data_year, cloudy_day_number, cloudy_day_number)
+
+    single_cloudy_day  = single_cloudy_day[single_cloudy_day['output'] > 0]
+
+    single_cloudfree_day = cloud_free_days[0]
+
+    plot1_label = "Day: " + str(cloudy_day_number)
+    plot2_label = "Day: " + str(single_cloudfree_day["day"].values[0])
+
+    # Create a figure and two subplots sharing the same y-axis
+    fig, (ax1, ax2) = matplotlib.pyplot.subplots(1, 2, sharey=True, figsize=(10, 5))
+
+    # Plot data on the first subplot
+    ax1.scatter(single_cloudy_day["minute"], single_cloudy_day["output"],  color=config.ORANGE, s=1)
+    ax1.set_title(plot1_label)
+    ax1.set_xlabel('Minute')
+    ax1.set_ylabel('Power(W)')
+
+    # Plot data on the second subplot
+    ax2.scatter(single_cloudfree_day["minute"], single_cloudfree_day["output"], color=config.ORANGE, s=1)
+    ax2.set_title(plot2_label)
+    ax2.set_xlabel('Minute')
+
+    # Adjust the layout to prevent overlap
+    matplotlib.pyplot.tight_layout()
+
+    pos1 = ax1.get_position()  # Get the original position of ax1
+    pos2 = ax2.get_position()  # Get the original position of ax2
+
+    ax1.set_position([pos1.x0, pos1.y0, pos1.width * 1.05, pos1.height])  # Adjust ax1 position
+    ax2.set_position([pos1.x0 + pos1.width * 1.05, pos2.y0, pos2.width * 1.0, pos2.height])  # Adjust ax2 position
+
+    # Display the plot
+    matplotlib.pyplot.show()
+
+#compare_cloudfree_to_cloudy_day()
+
+
+def plot_poa_for_different_latitudes():
+
+    year_n = 2024
+    lon = config.longitude_helsinki
+
+    colors = ['red', 'orange', 'yellow', 'green', "blue" ,'purple']
+    labels = []
+    plot_index = 0
+
+    for lat in range(20, 80, 10):
+        firsts = []
+        lasts = []
+        days = []
+        minutes_all = []
+        days_double = []
+        for day_n in range(1, 365,1):
+            first, last = pvlib_poa.get_first_and_last_nonzero_minute(lat, lon, year_n, day_n)
+
+            if first is not None and last is not None:
+                firsts.append(first)
+                lasts.append(last)
+                days.append(day_n)
+                minutes_all.append(first)
+                minutes_all.append(last)
+                days_double.append(day_n)
+                days_double.append(day_n)
+
+        labels.append(str(lat) + " degrees latitude")
+        matplotlib.pyplot.scatter(days_double, minutes_all, s=1, c=colors[plot_index])
+        plot_index +=1
+
+    color_patches = [Patch(facecolor=color, edgecolor='black', label=label) for color, label in zip(colors, labels)]
+    matplotlib.pyplot.legend(handles=color_patches, loc='center')
+    #matplotlib.pyplot.title("First and last minutes at different latitudes")
+    matplotlib.pyplot.ylabel("Minute")
+    matplotlib.pyplot.xlabel("Day")
+    matplotlib.pyplot.show()
+
+
+plot_poa_for_different_latitudes()
 
 
 
@@ -77,7 +172,7 @@ def compare_poa_to_measurements_multi_day():
 
     matplotlib.pyplot.show()
 
-compare_poa_to_measurements_multi_day()
+#compare_poa_to_measurements_multi_day()
 
 
 def compare_poa_to_measurements_single_day():
@@ -120,7 +215,7 @@ def compare_poa_to_measurements_single_day():
 
     matplotlib.pyplot.show()
 
-compare_poa_to_measurements_single_day()
+#compare_poa_to_measurements_single_day()
 def compare_poa_to_improved_sim(year, clearday):
     year_n = year
     tilt = config.tilt_helsinki
