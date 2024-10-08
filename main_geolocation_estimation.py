@@ -71,6 +71,7 @@ def estimate_longitude_v2():  # works, used in thesis
     plt.show()
 
     """
+    These are for day range 125 to 250
     KUOPIO RESULTS:
     estimating longitude for year 2017
     Longitude median: 27.25

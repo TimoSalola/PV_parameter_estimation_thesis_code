@@ -2,6 +2,8 @@ import math
 
 import matplotlib.pyplot
 import numpy
+import numpy.fft as fft
+
 
 from helpers import splitters2
 
@@ -136,37 +138,23 @@ def __day_smoothness_value(day_xa):
     return errors_normalized
 
 
-def __fourier_filter(values, values_from_ends):
+def __fourier_filter(values, saved_frequencies):
     """
     :param values: array of values
-    :param values_from_ends: how many of the longest frequencies to spare
+    :param saved_frequencies: how many of the longest frequencies to spare
     :return: values after shorter frequencies are removed
     """
 
     # FFT based low pass filter
     # Converting values to Fourier transform frequency representatives
-    values_fft = numpy.fft.fft(values)
+
     # values in values_fft represent the frequencies which make up the values array. Structure is as follows:
-    # [low, low, ... med, med .... high, high .... med, med .... low,low]
+    # [constant, low, low, ... med, med .... high, high .... med, med .... low,low]
     # this means that by zeroing out most of the values in the center, only the low frequency parts can be chosen
 
-    # zeroing out every value which is further than [values_from_ends] from the ends of the values_fft array
-    #values_fft[values_from_ends:len(values_fft) - values_from_ends] = [0] * (len(values_fft) - 2 * values_from_ends)
-    values_fft[1 + values_from_ends:len(values_fft) - values_from_ends] = [0] * (
-                len(values_fft) - 1 - 2 * values_from_ends)
+    # zeroing out all of the frequencies higher than given input
+    values_fft = fft.fft(values)
+    values_fft[1+saved_frequencies:len(values) - saved_frequencies] = 0
+    values_ifft = fft.ifft(values_fft).real
 
-    # reversing the fft operation, resulting in values with only low frequency components
-    values_ifft = numpy.fft.ifft(values_fft)
-
-    # fft results can be partly imaginary, eq. 2.5 + 2i. Imaginary part should be small as
-    values_ifft_real = []
-
-    # saving only real components
-    for var in values_ifft:
-        values_ifft_real.append(var.real)
-
-    # returning the result of the low pass filter
-
-    #print("returning: " + str(values_ifft_real))
-    #print("len output: " + str(len(values_ifft_real)))
-    return values_ifft_real
+    return values_ifft

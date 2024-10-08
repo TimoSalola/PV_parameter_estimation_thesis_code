@@ -20,7 +20,7 @@ def compare_cloudfree_to_cloudy_day():
 
     data_year = splitters2.split_df_year(data, year_n)
 
-    cloud_free_days = cloud_free_day_finder.find_smooth_days_df(data_year, 150, 250, 0.5)
+    cloud_free_days = cloud_free_day_finder.find_smooth_days_df(data_year, 156, 157, 0.5)
 
     cloudy_day_number = 153
 
@@ -59,7 +59,7 @@ def compare_cloudfree_to_cloudy_day():
     # Display the plot
     matplotlib.pyplot.show()
 
-#compare_cloudfree_to_cloudy_day()
+compare_cloudfree_to_cloudy_day()
 
 
 def plot_poa_for_different_latitudes():
@@ -101,7 +101,7 @@ def plot_poa_for_different_latitudes():
     matplotlib.pyplot.show()
 
 
-plot_poa_for_different_latitudes()
+#plot_poa_for_different_latitudes()
 
 
 
